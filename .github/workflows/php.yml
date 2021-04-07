@@ -7,33 +7,10 @@ on:
     branches: [ master ]
 
 jobs:
-  tests:
+  build-test:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: true
-      matrix:
-        php: [ 7.4 ]
-        dependency-version: [ prefer-stable ]
-
-    name: PHP ${{ matrix.php }} ${{ matrix.dependency-version }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          tools: composer
-          coverage: none
-
-      - name: Setup Problem Matchers
-        run: |
-          echo "::add-matcher::${{ runner.tool_cache }}/php.json"
-          echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
-      - name: Install PHP dependencies
-        run: composer update --${{ matrix.dependency-version }} --no-interaction --prefer-dist --no-progress --ansi
-
-      - name: Run Tests
-        run: vendor/bin/phpunit
+      - uses: actions/checkout@v2
+      - uses: php-actions/composer@v5 # or alternative dependency management
+      - uses: php-actions/phpunit@v2
